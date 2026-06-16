@@ -29,6 +29,7 @@ export async function buscarLinksAtualizacoes() {
 export type ParceiroPayload = {
   nome_completo: string;
   empresa: string;
+  tipo_pessoa: string;
   cnpj: string;
   celular: string;
   email: string;

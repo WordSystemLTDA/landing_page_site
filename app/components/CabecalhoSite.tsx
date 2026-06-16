@@ -25,7 +25,7 @@ const CLASSES_ICONES_DOWNLOAD: Record<ChavePlataformaDownload, string> = {
     ios: "w-4 h-4 shrink-0",
 };
 
-type MenuDropdownKey = "funcionalidades" | "segmentos" | "plataformas";
+type MenuDropdownKey = "funcionalidades" | "segmentos" | "plataformas" | "planos";
 
 /**
  * Header compartilhado entre todas as páginas do site.
@@ -55,7 +55,7 @@ export default function CabecalhoSite() {
     }, [configSite.download]);
 
     const MENUS_NAV_DROPDOWN = useMemo<{ key: MenuDropdownKey; menu: MenuSuspenso }[]>(() => {
-        return (["funcionalidades", "segmentos"] as const)
+        return (["planos", "funcionalidades", "segmentos"] as const)
             .filter((k) => menusConfig[k] != null)
             .map((k) => ({ key: k, menu: menusConfig[k]! }));
     }, [menusConfig]);
@@ -73,6 +73,10 @@ export default function CabecalhoSite() {
 
     function withDestino(url: string) {
         return adicionarDestinoNaUrl(url, destinoAtual, plataformaAtual);
+    }
+
+    function getMenuItemUrl(menu: MenuSuspenso, item: MenuSuspenso["itens"][number]) {
+        return item.path ?? `${menu.prefixoRota}/${item.slug}`;
     }
 
     /** Ao clicar em uma plataforma, atualiza o param ?plataforma= na URL atual */
@@ -150,10 +154,6 @@ export default function CabecalhoSite() {
                             Seja Parceiro
                         </Link>
 
-                        <Link to={withDestino("/planos")} style={navStyle("/planos")} className={navClass("/planos")}>
-                            Planos
-                        </Link>
-
                         {MENUS_NAV_DROPDOWN.map(({ key, menu }) => (
                             <div
                                 key={key}
@@ -182,7 +182,7 @@ export default function CabecalhoSite() {
                                         style={{ boxShadow: "0 20px 60px rgba(0,0,0,0.12), 0 4px 16px rgba(0,0,0,0.08)" }}
                                     >
                                         {menu.itens.map((item) => {
-                                            const itemUrl = `${menu.prefixoRota}/${item.slug}`;
+                                            const itemUrl = getMenuItemUrl(menu, item);
                                             const isActive = pathname === itemUrl;
                                             return (
                                                 <Link
@@ -382,11 +382,7 @@ export default function CabecalhoSite() {
                     <Link to={withDestino("/parceiros")} style={navStyleMobile("/parceiros")} className={navClassMobile("/parceiros")} onClick={() => setMenuAberto(false)}>
                         Seja Parceiro
                     </Link>
-                    <Link to={withDestino("/planos")} style={navStyleMobile("/planos")} className={navClassMobile("/planos")} onClick={() => setMenuAberto(false)}>
-                        Planos
-                    </Link>
-
-                    {/* Menus dropdown mobile (funcionalidades, segmentos) */}
+                    {/* Menus dropdown mobile */}
                     {MENUS_NAV_DROPDOWN.map(({ key, menu }) => (
                         <div key={key}>
                             <button
@@ -411,7 +407,7 @@ export default function CabecalhoSite() {
                             {mobileSubmenuAberto === key && (
                                 <div className="ml-3 pl-3 border-l-2 border-gray-100 flex flex-col gap-0.5 mb-1">
                                     {menu.itens.map((item) => {
-                                        const itemUrl = `${menu.prefixoRota}/${item.slug}`;
+                                        const itemUrl = getMenuItemUrl(menu, item);
                                         const isActive = pathname === itemUrl;
                                         return (
                                             <Link

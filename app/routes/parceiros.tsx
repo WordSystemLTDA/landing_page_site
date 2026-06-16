@@ -6,7 +6,7 @@ import { useAfiliado } from "../hooks/useAfiliado";
 import { ConfigSite } from "../lib/config";
 import { Cores, Fontes, Sombras } from "../lib/theme";
 import { enviarFormularioParceiro } from "../services/ServicoApi";
-import { maskCNPJ, maskPhone } from "../utils/formatacao";
+import { maskCNPJ, maskCPF, maskPhone } from "../utils/formatacao";
 
 // ─── Ícones inline ───────────────────────────────────────────────────────────
 
@@ -48,6 +48,7 @@ export default function PaginaParceiros() {
     const [form, setForm] = useState({
         nome_completo: "",
         empresa: "",
+        tipo_pessoa: "Física",
         cnpj: "",
         celular: "",
         email: "",
@@ -124,8 +125,13 @@ export default function PaginaParceiros() {
 
     function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) {
         let { name, value } = e.target;
-        if (name === "cnpj") value = maskCNPJ(value);
+        if (name === "cnpj") value = form.tipo_pessoa === "Física" ? maskCPF(value) : maskCNPJ(value);
         if (name === "celular") value = maskPhone(value);
+        if (name === "tipo_pessoa") {
+            setForm((s) => ({ ...s, tipo_pessoa: value, cnpj: "" }));
+            setFieldErrors((s) => ({ ...s, tipo_pessoa: "", cnpj: "" }));
+            return;
+        }
         // Limpa cidade quando troca de estado
         if (name === "estado") {
             setForm((s) => ({ ...s, estado: value, cidade: "" }));
@@ -215,7 +221,7 @@ export default function PaginaParceiros() {
             <CabecalhoSite />
 
             {/* ── Hero ──────────────────────────────────────────────────────────── */}
-            <section className="pt-40 pb-20 px-4 md:px-8 text-center relative overflow-hidden">
+            <section className="order-1 pt-40 pb-20 px-4 md:px-8 text-center relative overflow-hidden">
                 <div className="absolute top-20 left-0 md:left-10 w-72 h-72 rounded-full mix-blend-multiply filter blur-[128px] opacity-20 animate-pulse" style={{ backgroundColor: Cores.primaria }} />
                 <div className="absolute top-40 right-10 w-72 h-72 rounded-full mix-blend-multiply filter blur-[128px] opacity-20 animate-pulse" style={{ backgroundColor: Cores.destaque, animationDelay: "2s" }} />
 
@@ -238,7 +244,7 @@ export default function PaginaParceiros() {
             </section>
 
             {/* ── Sobre a empresa ───────────────────────────────────────────────── */}
-            <section className="py-20 px-4 md:px-8" style={{ backgroundColor: Cores.primariaClara }}>
+            <section className="order-3 py-20 px-4 md:px-8" style={{ backgroundColor: Cores.primariaClara }}>
                 <div className="container mx-auto max-w-5xl">
                     <div className="text-center mb-12">
                         <span className="font-bold tracking-wider uppercase text-sm mb-4 block" style={{ color: Cores.primaria }}>
@@ -326,7 +332,7 @@ export default function PaginaParceiros() {
             </section>
 
             {/* ── Vantagens ─────────────────────────────────────────────────────── */}
-            <section className="py-20 px-4 md:px-8">
+            <section className="order-4 py-20 px-4 md:px-8">
                 <div className="container mx-auto max-w-6xl">
                     <div className="text-center mb-14">
                         <span className="font-bold tracking-wider uppercase text-sm mb-4 block" style={{ color: Cores.primaria }}>
@@ -353,7 +359,7 @@ export default function PaginaParceiros() {
             </section>
 
             {/* ── Como funciona ─────────────────────────────────────────────────── */}
-            <section className="py-20 px-4 md:px-8" style={{ backgroundColor: Cores.primariaClara }}>
+            <section className="order-5 py-20 px-4 md:px-8" style={{ backgroundColor: Cores.primariaClara }}>
                 <div className="container mx-auto max-w-4xl">
                     <div className="text-center mb-14">
                         <span className="font-bold tracking-wider uppercase text-sm mb-4 block" style={{ color: Cores.primaria }}>
@@ -382,7 +388,7 @@ export default function PaginaParceiros() {
             </section>
 
             {/* ── Formulário de parceria ────────────────────────────────────────── */}
-            <section id="formulario" className="py-20 px-4 md:px-8">
+            <section id="formulario" className="order-2 py-20 px-4 md:px-8">
                 <div className="container mx-auto max-w-5xl">
                     <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 items-start">
                         {/* Form (3/5) */}
@@ -415,26 +421,51 @@ export default function PaginaParceiros() {
                                     />
                                 </FormField>
 
-                                <FormField label="Empresa (opcional)" error={fieldErrors.empresa}>
-                                    <InputField
-                                        name="empresa"
-                                        placeholder="Nome da sua empresa"
-                                        value={form.empresa}
-                                        onChange={handleChange}
-                                        hasError={!!fieldErrors.empresa}
-                                        icon={
-                                            <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-                                                <path strokeLinecap="round" strokeLinejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-                                            </svg>
-                                        }
-                                    />
-                                </FormField>
+                                <div className="grid grid-cols-1 sm:grid-cols-[minmax(0,1fr)_180px] gap-5">
+                                    <FormField label="Empresa (opcional)" error={fieldErrors.empresa}>
+                                        <InputField
+                                            name="empresa"
+                                            placeholder="Nome da sua empresa"
+                                            value={form.empresa}
+                                            onChange={handleChange}
+                                            hasError={!!fieldErrors.empresa}
+                                            icon={
+                                                <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                                                </svg>
+                                            }
+                                        />
+                                    </FormField>
+
+                                    <FormField label="Tipo de Pessoa" error={fieldErrors.tipo_pessoa}>
+                                        <div
+                                            className="relative flex items-center rounded-xl border-2 bg-white transition-colors focus-within:border-(--color-primary)"
+                                            style={{ borderColor: fieldErrors.tipo_pessoa ? "#EF4444" : Cores.borda }}
+                                        >
+                                            <select
+                                                name="tipo_pessoa"
+                                                value={form.tipo_pessoa}
+                                                onChange={handleChange}
+                                                className="w-full bg-transparent py-3 pl-3 pr-9 text-sm outline-none min-w-0 appearance-none"
+                                                style={{ color: Cores.escura }}
+                                            >
+                                                <option value="Física">Pessoa Física</option>
+                                                <option value="Jurídica">Pessoa Jurídica</option>
+                                            </select>
+                                            <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2" style={{ color: Cores.textoDesabilitado }}>
+                                                <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" d="M6 9l6 6 6-6" />
+                                                </svg>
+                                            </span>
+                                        </div>
+                                    </FormField>
+                                </div>
 
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                                    <FormField label="CNPJ (opcional)" error={fieldErrors.cnpj}>
+                                    <FormField label={`${form.tipo_pessoa === "Física" ? "CPF" : "CNPJ"} (opcional)`} error={fieldErrors.cnpj}>
                                         <InputField
                                             name="cnpj"
-                                            placeholder="00.000.000/0000-00"
+                                            placeholder={form.tipo_pessoa === "Física" ? "000.000.000-00" : "00.000.000/0000-00"}
                                             value={form.cnpj}
                                             onChange={handleChange}
                                             hasError={!!fieldErrors.cnpj}
@@ -677,7 +708,9 @@ export default function PaginaParceiros() {
                 </div>
             </section>
 
-            <RodapeSite />
+            <div className="order-last">
+                <RodapeSite />
+            </div>
         </div>
     );
 }

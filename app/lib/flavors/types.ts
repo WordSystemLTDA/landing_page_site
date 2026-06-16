@@ -11,6 +11,8 @@
 export type ItemMenuSuspenso = {
   rotulo: string;
   slug: string;
+  /** Caminho absoluto opcional. Quando omitido, usa `${prefixoRota}/${slug}`. */
+  path?: string;
 };
 
 /** Configuração de um menu suspenso no cabeçalho */
@@ -22,6 +24,7 @@ export type MenuSuspenso = {
 
 /** Menus suspensos do cabeçalho (funcionalidades, segmentos, plataformas) */
 export type MenusCabecalho = {
+  planos?: MenuSuspenso;
   funcionalidades?: MenuSuspenso;
   segmentos?: MenuSuspenso;
   plataformas?: MenuSuspenso;

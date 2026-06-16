@@ -1,5 +1,6 @@
-﻿import React from "react";
+import React from "react";
 import { useCardPlano } from "../hooks/useCardPlano";
+import type { CoresFlavor } from "../lib/flavors";
 import { Cores } from "../lib/theme";
 import type { ModeloPlanos, ModeloTipoDeMensalidade } from "../models/ModeloPlanos";
 import { usePlataforma } from "./inicio/PlataformaContext";
@@ -11,6 +12,7 @@ export interface CardPlanosPainelProps {
     tipodemensalidadeSelecionado?: ModeloTipoDeMensalidade | null;
     targetRef?: React.RefObject<HTMLDivElement | null>;
     mostrarPlanoCliente: boolean;
+    cores?: CoresFlavor;
 }
 
 /**
@@ -22,6 +24,7 @@ export default function CardPlanosPainel({
     tipodemensalidadeSelecionado,
     targetRef,
     mostrarPlanoCliente,
+    cores = Cores,
 }: CardPlanosPainelProps) {
     const { textos } = usePlataforma();
     const t = textos.planos;
@@ -53,16 +56,16 @@ export default function CardPlanosPainel({
 
     return (
         <div className="relative pt-2 px-0 md:pl-2 md:pr-2">
-            {isMaisVendido && <BadgeMaisVendido rotuloMaisVendido={t.rotuloMaisVendido} />}
+            {isMaisVendido && <BadgeMaisVendido rotuloMaisVendido={t.rotuloMaisVendido} cores={cores} />}
 
             <div className="h-full px-4 md:px-5">
                 <div
                     className={`w-full md:w-75 md:h-262.5 rounded-[10px] border ${isSelecionado ? "border-(--color-primary)" : "border-gray-200"
                         }`}
-                    style={isMaisVendido ? { backgroundColor: Cores.escura } : { backgroundColor: "white" }}
+                    style={isMaisVendido ? { backgroundColor: cores.escura } : { backgroundColor: "white" }}
                 >
                     <div className="p-3.75 h-full flex flex-col relative">
-                        {isSelecionado && <CheckmarkSelecionado />}
+                        {isSelecionado && <CheckmarkSelecionado cores={cores} />}
 
                         <div className="flex flex-col items-center grow">
                             {/* Nome */}
@@ -85,7 +88,7 @@ export default function CardPlanosPainel({
                                 className="transition-opacity duration-300"
                                 style={{ opacity: percentual > 0 ? 1 : 0, pointerEvents: percentual > 0 ? "auto" : "none" }}
                             >
-                                <BadgeEconomia texto={`${t.prefixoEconomize} ${economiaFormatada}`} />
+                                <BadgeEconomia texto={`${t.prefixoEconomize} ${economiaFormatada}`} cores={cores} />
                             </div>
 
                             {/* Preço mensal */}
@@ -108,7 +111,7 @@ export default function CardPlanosPainel({
                                     className={`w-full h-full rounded-xl text-[16px] font-semibold transition-all flex items-center justify-center hover:-translate-y-0.5 ${isSelecionado ? "cursor-not-allowed opacity-70" : "cursor-pointer"
                                         }`}
                                     style={{
-                                        backgroundColor: isSelecionado ? Cores.textoDesabilitado : Cores.primaria,
+                                        backgroundColor: isSelecionado ? cores.textoDesabilitado : cores.primaria,
                                         color: "white",
                                     }}
                                 >
@@ -123,14 +126,14 @@ export default function CardPlanosPainel({
                             </div>
 
                             {/* Box de features fixas */}
-                            <FeaturesBox isMaisVendido={isMaisVendido} quantidadeUsuarios={item.quantidadedeusuario} rotuloUsuarios={t.rotuloUsuarios} rotuloPainelAdmin={t.rotuloPainelAdmin} rotuloAppMobile={t.rotuloAppMobile} rotuloEspacoIlimitado={t.rotuloEspacoIlimitado} />
+                            <FeaturesBox isMaisVendido={isMaisVendido} quantidadeUsuarios={item.quantidadedeusuario} rotuloUsuarios={t.rotuloUsuarios} rotuloPainelAdmin={t.rotuloPainelAdmin} rotuloAppMobile={t.rotuloAppMobile} rotuloEspacoIlimitado={t.rotuloEspacoIlimitado} cores={cores} />
 
                             {/* Modalidades incluídas */}
                             <div className="mt-3.75 w-full flex flex-col">
                                 {(item.modalidadedosplanos ?? []).map((mod) => (
                                     <div key={mod.id} className="flex items-center px-2 py-1">
-                                        <div className={`w-5 h-5 rounded-full flex items-center justify-center shrink-0 ${isMaisVendido ? "bg-white/20" : ""}`} style={!isMaisVendido ? { backgroundColor: Cores.primariaClara } : {}}>
-                                            <svg className="w-3 h-3" fill="none" stroke={Cores.primaria} strokeWidth="3" viewBox="0 0 24 24">
+                                        <div className={`w-5 h-5 rounded-full flex items-center justify-center shrink-0 ${isMaisVendido ? "bg-white/20" : ""}`} style={!isMaisVendido ? { backgroundColor: cores.primariaClara } : {}}>
+                                            <svg className="w-3 h-3" fill="none" stroke={cores.primaria} strokeWidth="3" viewBox="0 0 24 24">
                                                 <polyline points="20 6 9 17 4 12" />
                                             </svg>
                                         </div>
@@ -163,7 +166,7 @@ export default function CardPlanosPainel({
                                 onClick={rolarParaComparacao}
                                 className={`mt-2 mb-2 text-[13px] underline bg-transparent border-none cursor-pointer transition-colors ${isMaisVendido ? "text-white/60 hover:text-white" : "hover:text-(--color-primary)"
                                     }`}
-                                style={!isMaisVendido ? { color: Cores.primaria } : {}}
+                                style={!isMaisVendido ? { color: cores.primaria } : {}}
                             >
                                 {t.linkCompararPlanos}
                             </button>
@@ -177,20 +180,20 @@ export default function CardPlanosPainel({
 
 // ── Sub-componentes visuais internos ────────────────────────────────────────
 
-function BadgeMaisVendido({ rotuloMaisVendido }: { rotuloMaisVendido: string }) {
+function BadgeMaisVendido({ rotuloMaisVendido, cores }: { rotuloMaisVendido: string; cores: CoresFlavor }) {
     return (
-        <div className="absolute top-0 -right-2.5 z-10 w-25 h-7.5 flex items-center justify-center">
-            <div className="relative w-full h-full">
+        <div className="absolute top-0 -right-2.5 z-10 flex items-center justify-center">
+            <div className="relative flex items-center justify-center">
                 <svg
                     className="absolute -top-px left-1/2 -translate-x-1/2 w-12.5 h-12.5 z-[-1]"
-                    fill={Cores.primaria}
+                    fill={cores.primaria}
                     viewBox="0 0 24 24"
                 >
                     <path d="M7 10l5 5 5-5z" />
                 </svg>
                 <div
-                    className="w-30 rounded-[5px] px-2.5 py-0.5 text-white text-sm text-center -translate-x-2.5"
-                    style={{ backgroundColor: Cores.primaria }}
+                    className="rounded-[5px] px-2.5 py-0.5 text-white text-sm text-center whitespace-nowrap -translate-x-2.5"
+                    style={{ backgroundColor: cores.primaria }}
                 >
                     {rotuloMaisVendido}
                 </div>
@@ -199,13 +202,13 @@ function BadgeMaisVendido({ rotuloMaisVendido }: { rotuloMaisVendido: string }) 
     );
 }
 
-function CheckmarkSelecionado() {
+function CheckmarkSelecionado({ cores }: { cores: CoresFlavor }) {
     return (
         <div className="absolute -top-2.5 right-5">
             <svg
                 className="w-12.5 h-12.5"
                 fill="none"
-                stroke={Cores.primaria}
+                stroke={cores.primaria}
                 viewBox="0 0 24 24"
             >
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
@@ -214,19 +217,19 @@ function CheckmarkSelecionado() {
     );
 }
 
-function BadgeEconomia({ texto }: { texto: string }) {
+function BadgeEconomia({ texto, cores }: { texto: string; cores: CoresFlavor }) {
     return (
         <div className="mt-7.5 relative w-full flex justify-center items-center">
             <svg
                 className="absolute -top-3.75 w-12.5 h-12.5 z-0"
-                fill={Cores.primaria}
+                fill={cores.primaria}
                 viewBox="0 0 24 24"
             >
                 <path d="M7 10l5 5 5-5z" />
             </svg>
             <div
                 className="rounded-[5px] px-2.5 py-0.5 text-white text-sm font-medium z-10 whitespace-nowrap"
-                style={{ backgroundColor: Cores.primaria }}
+                style={{ backgroundColor: cores.primaria }}
             >
                 {texto}
             </div>
@@ -241,6 +244,7 @@ function FeaturesBox({
     rotuloPainelAdmin,
     rotuloAppMobile,
     rotuloEspacoIlimitado,
+    cores,
 }: {
     isMaisVendido: boolean;
     quantidadeUsuarios?: string;
@@ -248,6 +252,7 @@ function FeaturesBox({
     rotuloPainelAdmin: string;
     rotuloAppMobile: string;
     rotuloEspacoIlimitado: string;
+    cores: CoresFlavor;
 }) {
     const spanClass = isMaisVendido ? "text-white/70" : "text-gray-700";
     const boxClass = isMaisVendido
@@ -257,7 +262,7 @@ function FeaturesBox({
     const items: { icon: React.ReactNode; label: string }[] = [
         {
             icon: (
-                <svg className="w-4.5 h-4.5" fill={Cores.primaria} viewBox="0 0 24 24">
+                <svg className="w-4.5 h-4.5" fill={cores.primaria} viewBox="0 0 24 24">
                     <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
                 </svg>
             ),
@@ -265,7 +270,7 @@ function FeaturesBox({
         },
         {
             icon: (
-                <svg className="w-4.5 h-4.5" fill="none" stroke={Cores.primaria} strokeWidth="2" viewBox="0 0 24 24">
+                <svg className="w-4.5 h-4.5" fill="none" stroke={cores.primaria} strokeWidth="2" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
                 </svg>
             ),
@@ -273,7 +278,7 @@ function FeaturesBox({
         },
         {
             icon: (
-                <svg className="w-4.5 h-4.5" fill="none" stroke={Cores.primaria} strokeWidth="2" viewBox="0 0 24 24">
+                <svg className="w-4.5 h-4.5" fill="none" stroke={cores.primaria} strokeWidth="2" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
                 </svg>
             ),
@@ -281,7 +286,7 @@ function FeaturesBox({
         },
         {
             icon: (
-                <svg className="w-4.5 h-4.5" fill="none" stroke={Cores.primaria} strokeWidth="2" viewBox="0 0 24 24">
+                <svg className="w-4.5 h-4.5" fill="none" stroke={cores.primaria} strokeWidth="2" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z" />
                 </svg>
             ),
@@ -290,7 +295,7 @@ function FeaturesBox({
     ];
 
     return (
-        <div className={`mt-3.75 rounded-xl p-2.5 w-full ${boxClass}`} style={!isMaisVendido ? { backgroundColor: Cores.primariaClara, border: `1px solid ${Cores.primaria}22` } : {}}>
+        <div className={`mt-3.75 rounded-xl p-2.5 w-full ${boxClass}`} style={!isMaisVendido ? { backgroundColor: cores.primariaClara, border: `1px solid ${cores.primaria}22` } : {}}>
             {items.map(({ icon, label }) => (
                 <div key={label} className="flex items-center mb-1.25 last:mb-0">
                     <span className="mr-1.25">{icon}</span>

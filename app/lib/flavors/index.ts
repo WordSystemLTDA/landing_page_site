@@ -1,4 +1,5 @@
 import { bigchef } from "./bigchef";
+import { marqFrete } from "./marqFrete";
 import { sagestart } from "./sagestart";
 import type { ConfigPlataforma, ConfiguracaoFlavor, Flavor, MenusCabecalho, SecaoInicioId, TextosFlavor } from "./types";
 
@@ -9,6 +10,7 @@ export * from "./types";
 
 const FLAVORS = {
   bigchef,
+  marqFrete,
   sagestart,
 } as const;
 

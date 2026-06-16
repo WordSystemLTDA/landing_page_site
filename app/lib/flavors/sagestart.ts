@@ -972,6 +972,15 @@ export const sagestart: Flavor = {
     },
 
     menus: {
+      planos: {
+        rotulo: "Planos",
+        prefixoRota: "/planos",
+        itens: [
+          { rotulo: "Empresariais", slug: "empresariais", path: "/planos" },
+          { rotulo: "Emissão de Nota Fiscal", slug: "emissao-nota-fiscal", path: "/planos-emissao-nota-fiscal" },
+          { rotulo: "CRM", slug: "crm", path: "/planos-crm" },
+        ],
+      },
       funcionalidades: {
         rotulo: "Funcionalidades",
         prefixoRota: "/funcionalidades",

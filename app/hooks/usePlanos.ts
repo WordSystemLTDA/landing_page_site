@@ -61,10 +61,13 @@ export function usePlanos(mostrarPlanoCliente = false) {
     }
   }
 
+  const todosPanos = data?.planospainel ?? [];
+  const planos = todosPanos.filter((p) => !p.nome.toLowerCase().includes("crm"));
+
   return {
     loading,
     error,
-    planos: data?.planospainel ?? [],
+    planos,
     tiposMensalidade: data?.tipodemensalidade ?? [],
     comparacao: data?.comparacaodemoduloscad ?? [],
     tipodemensalidadeSelecionado,
