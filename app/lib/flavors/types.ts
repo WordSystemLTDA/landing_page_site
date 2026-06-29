@@ -24,10 +24,17 @@ export type MenuSuspenso = {
 
 /** Menus suspensos do cabeçalho (funcionalidades, segmentos, plataformas) */
 export type MenusCabecalho = {
+  sistemas?: MenuSuspenso;
   planos?: MenuSuspenso;
   funcionalidades?: MenuSuspenso;
   segmentos?: MenuSuspenso;
   plataformas?: MenuSuspenso;
+};
+
+export type AcoesCabecalho = {
+  baixar?: boolean;
+  conta?: boolean;
+  teste?: boolean;
 };
 
 // ── Download ────────────────────────────────────────────────────────────────
@@ -142,6 +149,7 @@ export type ConfigPlataforma = {
   logo?: string;
   diasTeste?: number;
   cabecalho?: boolean;
+  acoesCabecalho?: Partial<AcoesCabecalho>;
   rodape?: boolean;
 
   /** Seções da home a exibir e sua ordem */
@@ -186,6 +194,7 @@ export type ConfiguracaoFlavor = {
   logoColorida: string;
   /** Duração do período de teste gratuito (em dias) */
   diasTeste: number;
+  acoesCabecalho?: AcoesCabecalho;
 
   /**
    * Seções da página inicial — array **ordenado** de IDs.

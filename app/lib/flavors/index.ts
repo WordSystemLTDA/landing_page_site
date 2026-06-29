@@ -2,6 +2,7 @@ import { bigchef } from "./bigchef";
 import { custodeproducao } from "./custodeproducao";
 import { marqFrete } from "./marqFrete";
 import { sagestart } from "./sagestart";
+import { wordsystem } from "./wordsystem";
 import type { ConfigPlataforma, ConfiguracaoFlavor, Flavor, MenusCabecalho, SecaoInicioId, TextosFlavor } from "./types";
 
 export * from "./types";
@@ -14,6 +15,7 @@ const FLAVORS = {
   custodeproducao,
   marqFrete,
   sagestart,
+  wordsystem,
 } as const;
 
 export type FlavorKey = keyof typeof FLAVORS;
@@ -135,6 +137,7 @@ export function resolverPlataforma(slug: string): PlataformaResolvida {
       logo: plat.logo ?? cfg.logo,
       diasTeste: plat.diasTeste ?? cfg.diasTeste,
       cabecalho: plat.cabecalho ?? cfg.cabecalho,
+      acoesCabecalho: { ...cfg.acoesCabecalho, ...plat.acoesCabecalho },
       rodape: plat.rodape ?? cfg.rodape,
       secoes: plat.secoes ?? cfg.secoes,
       variantesInicio: plat.variantesInicio ?? cfg.variantesInicio,

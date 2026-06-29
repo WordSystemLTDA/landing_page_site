@@ -25,7 +25,7 @@ const CLASSES_ICONES_DOWNLOAD: Record<ChavePlataformaDownload, string> = {
     ios: "w-4 h-4 shrink-0",
 };
 
-type MenuDropdownKey = "funcionalidades" | "segmentos" | "plataformas" | "planos";
+type MenuDropdownKey = "sistemas" | "funcionalidades" | "segmentos" | "plataformas" | "planos";
 
 /**
  * Header compartilhado entre todas as páginas do site.
@@ -42,6 +42,10 @@ export default function CabecalhoSite() {
     const plat = usePlataforma();
     const configSite = plat.config;
     const menusConfig = plat.menus;
+    const acoesCabecalho = configSite.acoesCabecalho ?? {};
+    const mostrarBaixar = acoesCabecalho.baixar !== false;
+    const mostrarConta = acoesCabecalho.conta !== false;
+    const mostrarTeste = acoesCabecalho.teste !== false;
 
     // ── Downloads e menus computados a partir da plataforma ────────────
     const DOWNLOADS_HEADER = useMemo<DownloadHeaderItem[]>(() => {
@@ -55,7 +59,7 @@ export default function CabecalhoSite() {
     }, [configSite.download]);
 
     const MENUS_NAV_DROPDOWN = useMemo<{ key: MenuDropdownKey; menu: MenuSuspenso }[]>(() => {
-        return (["planos", "funcionalidades", "segmentos"] as const)
+        return (["sistemas", "planos", "funcionalidades", "segmentos"] as const)
             .filter((k) => menusConfig[k] != null)
             .map((k) => ({ key: k, menu: menusConfig[k]! }));
     }, [menusConfig]);
@@ -268,6 +272,7 @@ export default function CabecalhoSite() {
 
                 <div className="flex items-center gap-6">
                     {/* ── Botão Baixar (desktop) ── */}
+                    {mostrarBaixar && (
                     <div className="hidden md:block relative" ref={dropdownRef}>
                         <button
                             onClick={() => setDownloadAberto((v) => !v)}
@@ -334,7 +339,9 @@ export default function CabecalhoSite() {
                             </div>
                         )}
                     </div>
+                    )}
 
+                    {mostrarConta && (
                     <a
                         href={configSite.links.sistemaWeb}
                         style={{ color: Cores.textoSuave, borderColor: Cores.borda }}
@@ -345,7 +352,9 @@ export default function CabecalhoSite() {
                         </svg>
                         Já tenho conta
                     </a>
+                    )}
 
+                    {mostrarTeste && (
                     <Link
                         to={withDestino("/cadastro")}
                         style={{ backgroundColor: Cores.primaria, color: Cores.clara, boxShadow: Sombras.ctaPadrao }}
@@ -353,6 +362,7 @@ export default function CabecalhoSite() {
                     >
                         Teste Agora
                     </Link>
+                    )}
 
                     {/* Botão hambúrguer — visível só em mobile */}
                     <button
@@ -471,6 +481,7 @@ export default function CabecalhoSite() {
                     )}
 
                     {/* Downloads mobile */}
+                    {mostrarBaixar && (
                     <div className="mt-1 rounded-xl overflow-hidden border border-gray-100">
                         {configSite.download.categorias.map((cat, catIndex) => {
                             const items = DOWNLOADS_HEADER.filter((d) => d.chaveCategoria === cat.chave);
@@ -506,7 +517,9 @@ export default function CabecalhoSite() {
                             );
                         })}
                     </div>
+                    )}
 
+                    {mostrarConta && (
                     <div className="mt-2 pt-3 border-t border-gray-100 flex flex-col gap-2">
                         <a
                             href={configSite.links.sistemaWeb}
@@ -517,6 +530,7 @@ export default function CabecalhoSite() {
                             Já tenho conta
                         </a>
                     </div>
+                    )}
                 </div>
             )}
         </header>
